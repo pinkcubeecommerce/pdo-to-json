@@ -1,5 +1,5 @@
-# pg-to-json
-Format PostgreSQL result into json output for the web
+# pdo-to-json
+Format PDO query result into json output for the web
 
 # Setup
 1. Always specify the connection first
