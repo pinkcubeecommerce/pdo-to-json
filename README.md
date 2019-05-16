@@ -2,11 +2,23 @@
 Format PDO query result into json output for the web
 
 # Setup
-1. Always specify the connection first
+Always specify the connection first
+
+## Use setConnection method
 ```php
-use Pinkcube\PgToJson\Query;
+use Pinkcube\PdoToJson\Query;
 
 Query::setConnection($pdo);
+```
+## Use a config file
+Create the config file within your project root: `pdo-to-json.config.php`,
+add the following content and update `your-connection-string` with yours:
+```php
+<?php
+
+return [
+    'connection_string' => 'your-connection-string'
+];
 ```
 
 # Basic usage
