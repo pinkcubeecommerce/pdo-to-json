@@ -1,5 +1,5 @@
 {
-    "name": "pinkcube/pg-to-json",
+    "name": "pinkcube/pdo-to-json",
     "description": "Format PDO query result into json output for the web",
     "authors": [
         {
