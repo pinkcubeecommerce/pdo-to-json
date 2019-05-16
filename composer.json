@@ -1,0 +1,24 @@
+{
+    "name": "pinkcube/pg-to-json",
+    "description": "Format PostgreSQL result into json output for the web",
+    "authors": [
+        {
+            "name": "Timon Schenzel",
+            "email": "timon_schenzel@msn.com"
+        }
+    ],
+    "require-dev": {
+        "phpunit/phpunit": "^8.1"
+    },
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Pinkcube\\PgToJson\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
