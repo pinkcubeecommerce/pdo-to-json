@@ -3,7 +3,8 @@
 namespace Tests\Unit;
 
 use PDO;
-use Pinkcube\PgToJson\Query;
+use Exception;
+use Pinkcube\PdoToJson\Query;
 use PHPUnit\Framework\TestCase;
 
 class QueryTest extends TestCase
@@ -38,7 +39,59 @@ class QueryTest extends TestCase
         $this->migrateDatabase();
 
         Query::setConnection($this->pdo);
+    }
 
+    /** @test */
+    public function it_is_possible_to_specify_the_database_connection_with_a_config_file()
+    {
+        // Reset connection specified within setUp
+        Query::setConnection(null);
+
+        // Create config file
+        file_put_contents('pdo-to-json.config.php', "<?php return ['connection_string' => 'sqlite:tests/database.sqlite'];");
+
+        // Create and migrate tests/database.sqlite
+        if (file_exists('tests/database.sqlite')) {
+            unlink('tests/database.sqlite');
+        }
+        touch('tests/database.sqlite');
+        $pdo = new PDO('sqlite:tests/database.sqlite');
+        $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $pdo->exec("CREATE table users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            firstname tex tNOT NULL,
+            lastname text NOT NULL,
+            age int NOT NULL);"
+        );
+
+        foreach ($this->users as $user) {
+            unset($user['id']);
+            $pdo->prepare("insert into users (firstname, lastname, age) values (:firstname, :lastname, :age)")->execute($user);
+        }
+
+        $query = new Query('select * from users');
+
+        $this->assertEquals($this->users, $query->rawResult());
+
+        // Delete test/database.sqlite
+        unlink('tests/database.sqlite');
+        unlink('pdo-to-json.config.php');
+    }
+
+    /** @test */
+    public function it_will_check_if_the_pdo_connection_is_set()
+    {
+        if (file_exists('pdo-to-json.config.php')) {
+            unlink('pdo-to-json.config.php');
+        }
+
+        // Reset connection specified within setUp
+        Query::setConnection(null);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Please specify the proper PDO connection first.');
+
+        $query = new Query('select * from users');
     }
 
     /** @test */

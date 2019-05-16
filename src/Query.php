@@ -1,11 +1,19 @@
 <?php
 
-namespace Pinkcube\PgToJson;
+namespace Pinkcube\PdoToJson;
 
 use PDO;
+use Exception;
 
 class Query
 {
+    /**
+     * Location from the config file.
+     *
+     * @var string
+     */
+    protected $configFile = 'pdo-to-json.config.php';
+
     /**
      * Contains the pdo connection to the database.
      *
@@ -51,6 +59,12 @@ class Query
      */
     public function __construct($query, $data = null, $callback = null)
     {
+        if (! static::$pdo) {
+            $this->resolveFromConfigFile();
+        }
+
+        $this->checkIfPdoConnectionIsSet();
+
         $this->rawQuery = $query;
 
         if (is_callable($data)) {
@@ -129,6 +143,38 @@ class Query
     {
         header('Content-type: application/json');
         echo json_encode($this->result());
+    }
+
+    /**
+     * Resolve and parse the configuration file,
+     * use the connection string to create a new PDO connection.
+     * And set the connection as the current connection.
+     *
+     * @return void
+     */
+    protected function resolveFromConfigFile()
+    {
+        $config = null;
+
+        if (file_exists($this->configFile)) {
+            $config = require_once($this->configFile);
+        }
+
+        if ($config && $connectionString = $config['connection_string']) {
+            static::setConnection(new PDO($connectionString));
+        }
+    }
+
+    /**
+     * Check if there is a current connection stored.
+     *
+     * @return void
+     */
+    protected function checkIfPdoConnectionIsSet()
+    {
+        if (! static::$pdo) {
+            throw new Exception('Please specify the proper PDO connection first.');
+        }
     }
 }
 

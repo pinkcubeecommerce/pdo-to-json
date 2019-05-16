@@ -1,6 +1,6 @@
 {
     "name": "pinkcube/pg-to-json",
-    "description": "Format PostgreSQL result into json output for the web",
+    "description": "Format PDO query result into json output for the web",
     "authors": [
         {
             "name": "Timon Schenzel",
@@ -13,12 +13,15 @@
     "require": {},
     "autoload": {
         "psr-4": {
-            "Pinkcube\\PgToJson\\": "src/"
+            "Pinkcube\\PdoToJson\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
